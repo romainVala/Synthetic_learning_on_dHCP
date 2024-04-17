@@ -2,7 +2,6 @@
 This repository report in a csv file, all results from the article
 "Comprehensive analysis of synthetic learning applied to neonatal brain MRI segmentation"
 
-Since we use an Open data set (the dHCP)
 
 We also include a python script in generate_data subdir, as well as two label file examples, to show the generating process used with torchio package
 
