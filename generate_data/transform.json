@@ -1,0 +1,113 @@
+{
+    "train_transforms": 
+    [
+    {
+	"name": "RandomLabelsToImage", 
+	"attributes": 
+	{
+	    "label_key": "label",
+	    "image_key": "t1",
+	    "default_mean": [0, 1],
+	    "default_std" : [0.02, 0.1],
+	    "special_mean" : {"0":[0, 0], "18":[0, 2]}, // bg zero for motion and  vessel hyper instense
+	    "nb_labels"  : 21, 
+	    
+	}
+    },
+    {
+	"name": "RemapLabels",
+	"attributes": {
+	    "remapping": {
+		"0": 0,  "1": 1, "2": 2,  "3": 3, "4": 4,  "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, 
+		"10": 4, "11": 4, "12": 4, "13": 4, "14": 4, "15": 4, "16": 4, "17": 4, "18": 4,
+		"19": 3, "20": 3 //WM inhomogeneity
+	    },
+	    "include": "label" 
+	}
+    },
+
+    
+    {
+        "name": "RandomAffine",
+        "attributes":
+        {
+            "p" : 1,
+            "degrees" : 20,
+            "scales": 0.1,
+            "translation": 10,
+	    "default_pad_label": 0,
+            "image_interpolation":"bspline",
+        }
+    },
+    {
+        "name": "RandomElasticDeformation",
+        "attributes":
+        {
+            "p" : 0.8,
+	    "num_control_points": 8, //instead of 12 to avoid warning ...
+	    "max_displacement": 8,
+	    "image_interpolation":"bspline",
+        }
+    },
+    //	{
+    //	    "name": "OneHot",
+    //	    "attributes":            {
+    //		"include" :"label",
+    //		"invert_transform" : true,
+    //	    }
+    //	},
+    {
+        "name": "RandomAnisotropy",
+        "attributes":
+        {
+            "axes" : [0, 1, 2],
+            "downsampling" : [1, 6],
+            "p" : 0.00025,
+            "include" :"t1"
+        }
+    },
+    {
+        "name": "RandomBiasField",
+	"attributes":            {
+	    "coefficients" :0.5,
+	    "order": 3,
+	}
+    },
+    
+    {
+        "name": "RandomMotionFromTimeCourse",
+	"attributes": {
+	    "p": 0.5,
+	    "maxGlobalDisp": [2,8], //first time 10 epoch[3, 8],
+	    "maxGlobalRot":  [2,8],//first time 10 epoch[3, 8],
+	    "displacement_shift_strategy": "1D_wFT",// change with coreg to false after ep239
+	    "maxDisp": [1, 4],
+	    "maxRot": [1, 4],
+	    "noiseBasePars": [5, 20, 0.8],
+	    "swallowFrequency": [2, 6, 0.5],
+	    "swallowMagnitude": [2, 3],
+	    "suddenFrequency": [2, 6, 0.5],
+	    "suddenMagnitude": [2, 3],
+	    //"preserve_center_frequency_pct": 0.1,
+	    "phase_encoding_choice" : [0,1,2],
+	    "oversampling_pct": 0.0,
+	    "coregistration_to_orig": true, //
+	    "exclude": "label",
+	    "metrics": []
+	}
+    },
+
+    {
+        "name": "RandomNoise",
+        "attributes": {"p": 1, "mean": 0, "std": [0.005, 0.05]}
+    },
+    {
+        "name": "RescaleIntensity", 
+        "attributes": 
+        {
+            "out_min_max": [0, 1],
+            "percentiles": [0, 100]
+        }
+    }
+]
+}
